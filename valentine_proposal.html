@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Shuttappi ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #ff8fa3;
+            --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            --text-color: #590d22;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffccd5;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 1s ease-out;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Background Effects */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.5);
+            animation: float 6s linear infinite;
+            font-size: 1.5rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            width: 100%;
+        }
+
+        .section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 1;
+            animation: fadeIn 1s forwards;
+        }
+
+        /* Hero */
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            background: #ff2a50;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--primary-color);
+        }
+
+        /* Reveal Section */
+        .reveal-text {
+            font-size: 1.8rem;
+            margin: 1rem 0;
+            min-height: 3rem;
+            font-weight: 600;
+        }
+
+        .big-question {
+            font-size: 3.5rem;
+            color: #c9184a;
+            margin: 2rem 0;
+            line-height: 1.2;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Proposal Interaction */
+        .proposal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            position: relative; /* For button movement */
+            height: 100px; /* Constrain area initial but allow absolute movement */
+            width: 100%;
+        }
+        
+        #btn-no {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        /* Success Message */
+        .success-message {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .instruction {
+            font-size: 1.2rem;
+            color: #555;
+            background: rgba(255,255,255,0.6);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* Acceptance Speech */
+        .speech-box {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            width: 100%;
+            display: none; /* Initially hidden until Yes clicked */
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 1rem;
+            border: 2px solid #ffccd5;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .saved-message {
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            text-align: left;
+        }
+
+        /* Bonus Section */
+        .bonus-list {
+            list-style: none;
+            text-align: left;
+            background: rgba(255,255,255,0.5);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            display: inline-block;
+        }
+
+        .bonus-list li {
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .bonus-list li::before {
+            content: '💖';
+            margin-right: 10px;
+        }
+
+        /* Footer / Music */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #ff4d6d; }
+            50% { box-shadow: 0 0 30px #ff4d6d, 0 0 50px #ff8fa3; }
+            100% { box-shadow: 0 0 10px #ff4d6d; }
+        }
+
+        .glow-effect {
+            animation: glow 2s infinite;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .hero-title { font-size: 2rem; }
+            .big-question { font-size: 2.5rem; }
+            .proposal-buttons { flex-direction: column; height: auto; gap: 1rem; align-items: center;}
+            /* Reset position for No button on mobile to handle absolute movement better */
+            .section.active { width: 95%; margin: 0 auto; }
+            
+            /* Make sure 'No' button can still jump on mobile */
+            #btn-no.running { position: fixed; } 
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Audio -->
+    <audio id="bg-music" loop>
+        <!-- Placeholder - Replace with actual URL -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_13b53f6679.mp3?filename=romantic-piano-124976.mp3" type="audio/mpeg">
+    </audio>
+    <div class="music-control" onclick="toggleMusic()">🎵</div>
+
+    <!-- Background Elements -->
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-text">Preparing something special for Shuttappi... 💌</div>
+    </div>
+
+    <div class="container">
+        
+        <!-- Hero Section -->
+        <div id="hero-section" class="section active">
+            <h1 class="hero-title">Hey ANUPRIYA <br><span style="font-size: 0.6em; color: var(--primary-color);">(aka Shuttappi 😌💖)</span></h1>
+            <p class="hero-sub" style="margin-top: -10px;">I Need 2 Minutes of Your Attention...</p>
+            <p class="hero-sub">This is a life-changing, heart-shaking, stomach-fluttering announcement.</p>
+            <button class="btn btn-primary glow-effect" onclick="startJourney()">Click If You Love Drama 👀</button>
+        </div>
+
+        <!-- Reveal Section -->
+        <div id="reveal-section" class="section">
+            <div id="reveal-text-container" class="reveal-text"></div>
+        </div>
+
+        <!-- Proposal Section -->
+        <div id="proposal-section" class="section">
+            <h1 class="big-question">Shuttappi... <br>Will You Be My Valentine? 💍❤️</h1>
+            <div class="proposal-buttons">
+                <button class="btn btn-primary" onclick="acceptProposal()">💖 YES</button>
+                <button id="btn-no" class="btn btn-secondary" onmouseover="moveNoButton()" onclick="moveNoButton()">🙈 NO</button>
+            </div>
+            <div id="rejection-attempts" style="margin-top: 10px; color: #d00000; font-weight: bold; min-height: 1.5em;"></div>
+        </div>
+
+        <!-- Success Section -->
+        <div id="success-section" class="section">
+            <h1 class="success-message">Best decision of your life, Shuttappi 😌❤️</h1>
+            <h2 class="hero-sub">Officially mine this Valentine’s Day 💕</h2>
+            <div class="instruction">Take a screenshot and send it to me immediately 😎</div>
+
+            <!-- Acceptance Speech -->
+            <div class="speech-box" style="display: block;">
+                <h3>Write your official Valentine acceptance speech here 👇</h3>
+                <textarea id="speech-input" placeholder="I, Shuttappi, promise to..."></textarea>
+                <button class="btn btn-primary" onclick="saveSpeech()">Submit Speech 💌</button>
+                <div id="saved-speech" class="saved-message" style="display: none;"></div>
+            </div>
+
+            <!-- Bonus Section -->
+             <div style="margin-top: 3rem; width: 100%;">
+                <h3 style="color: var(--primary-color);">Top 5 Reasons Why Shuttappi Can’t Escape Me</h3>
+                <ul class="bonus-list">
+                    <li>You already tolerate me daily.</li>
+                    <li>You laugh at my worst jokes.</li>
+                    <li>You secretly love my overconfidence.</li>
+                    <li>You are emotionally attached now.</li>
+                    <li>Too late to return me.</li>
+                </ul>
+             </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        // --- Initialization ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 1000);
+            }, 2000);
+            
+            createFloatingHearts();
+            loadSavedSpeech();
+
+            // Try autoplay music (might be blocked by browser policy until interaction)
+            // document.getElementById('bg-music').play().catch(e => console.log("Autoplay blocked"));
+        });
+
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            if (music.paused) {
+                music.play();
+                document.querySelector('.music-control').textContent = '🔊';
+            } else {
+                music.pause();
+                document.querySelector('.music-control').textContent = '🎵';
+            }
+        }
+
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartChars = ['❤️', '💖', '💕', '💗'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerText = heartChars[Math.floor(Math.random() * heartChars.length)];
+                
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 1 + 0.5) + 'rem';
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                container.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 6000);
+            }, 300);
+        }
+
+        // --- Flow Logic ---
+        function startJourney() {
+            // Unmute music if not already playing
+            const music = document.getElementById('bg-music');
+            if (music.paused) {
+                music.play();
+                document.querySelector('.music-control').textContent = '🔊';
+            }
+
+            switchSection('hero-section', 'reveal-section');
+            runRevealSequence();
+        }
+
+        function switchSection(fromId, toId) {
+            document.getElementById(fromId).classList.remove('active');
+            setTimeout(() => {
+                document.getElementById(fromId).style.display = 'none';
+                document.getElementById(toId).style.display = 'flex'; // Ensure flex for centering
+                // Trigger reflow
+                void document.getElementById(toId).offsetWidth;
+                document.getElementById(toId).classList.add('active');
+            }, 800);
+        }
+
+        function runRevealSequence() {
+            const texts = [
+                "After deep thinking...",
+                "After 372 overthinking sessions...",
+                "After reviewing our unlimited memories...",
+                "After confirming you are permanently stuck with me..."
+            ];
+            
+            let container = document.getElementById('reveal-text-container');
+            let index = 0;
+
+            function showNext() {
+                if (index < texts.length) {
+                    container.style.opacity = 0;
+                    setTimeout(() => {
+                        container.innerText = texts[index];
+                        container.style.opacity = 1;
+                        index++;
+                        setTimeout(showNext, 2500);
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        switchSection('reveal-section', 'proposal-section');
+                    }, 1000);
+                }
+            }
+
+            showNext();
+        }
+
+        // --- Interaction Logic ---
+        const noButton = document.getElementById('btn-no');
+        const rejectionTexts = [
+            "Are you sure Shuttappi? 😭",
+            "Think properly 👀",
+            "System error. Try YES.",
+            "Wrong choice detected 🚨",
+            "Recalculating feelings...",
+            "Don't do this to me 🥺",
+            "I will tell your mom! 😤"
+        ];
+        let clickCount = 0;
+
+        function moveNoButton() {
+            // Make button position absolute/fixed to move it freely
+            noButton.style.position = 'fixed';
+            noButton.classList.add('running');
+            
+            // Get viewport dimensions
+            const maxWidth = window.innerWidth - noButton.offsetWidth - 20;
+            const maxHeight = window.innerHeight - noButton.offsetHeight - 20;
+
+            // Random coordinates
+            const randomX = Math.random() * maxWidth;
+            const randomY = Math.random() * maxHeight;
+
+            noButton.style.left = randomX + 'px';
+            noButton.style.top = randomY + 'px';
+
+            // Shrink slightly
+            const currentScale = 1 - (clickCount * 0.05);
+            if (currentScale > 0.5) {
+                noButton.style.transform = `scale(${currentScale})`;
+            }
+
+            // Change text
+            const text = rejectionTexts[Math.floor(Math.random() * rejectionTexts.length)];
+            document.getElementById('rejection-attempts').innerText = text;
+            
+            clickCount++;
+        }
+
+        function acceptProposal() {
+            // Celebration!
+            triggerConfetti();
+            
+            // Screen Glow
+            document.body.style.animation = "glow 1s ease-in-out infinite alternate";
+            
+            // Increase volume slightly if possible
+            const music = document.getElementById('bg-music');
+            if (music.volume < 1.0) music.volume = 1.0;
+
+            switchSection('proposal-section', 'success-section');
+        }
+
+        function triggerConfetti() {
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // --- Local Storage ---
+        function saveSpeech() {
+            const text = document.getElementById('speech-input').value;
+            if (text.trim() === "") {
+                alert("Write something first, Shuttappi! 😤");
+                return;
+            }
+            
+            localStorage.setItem('shuttappi_acceptance', text);
+            displaySavedSpeech(text);
+            
+            // Celebration for saving
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function loadSavedSpeech() {
+            const saved = localStorage.getItem('shuttappi_acceptance');
+            if (saved) {
+                displaySavedSpeech(saved);
+                document.getElementById('speech-input').value = saved;
+            }
+        }
+
+        function displaySavedSpeech(text) {
+            const display = document.getElementById('saved-speech');
+            display.style.display = 'block';
+            display.innerText = "💌 Saved for eternity: \"" + text + "\"";
+        }
+
+    </script>
+</body>
+</html>
